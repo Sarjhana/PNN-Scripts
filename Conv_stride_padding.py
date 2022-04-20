@@ -1,5 +1,5 @@
-# Calculating Convolution using mask H of two channels H1, H2 for feature maps X1, X2 with different strides and padding
-# Mask H is of two channels, each 2x2
+# Calculate Convolution with Strides and Padding
+# Input : Feature Maps X and Masks H
 
 import numpy as np
 
@@ -42,6 +42,8 @@ def apply_mask(X, H, padding=0, stride=1, dilation=1):
     return feature_map
   
 if __name__ == '__main__':
+
+  # 2 input feature maps with 2 channels of 2x2 masks
   X1 = [[0.2, 1., 0.],
           [-1., 0., -0.1],
           [0.1, 0., 0.1]]
@@ -71,3 +73,29 @@ if __name__ == '__main__':
 
   print('padding=0 and stride=1 dilation=2')
   print(apply_mask(X, H, padding=0, stride=1, dilation=2))
+
+  print('------------------------------')
+
+  # 3 input feature maps with 3 channels of 1x1 masks 
+  X1 = [[0.2, 1., 0.],
+          [-1., 0., -0.1],
+          [0.1, 0., 0.1]]
+
+  X2 = [[1., 0.5, 0.2],
+        [-1., -0.5, -0.2],
+        [0.1, -0.1, 0.]]
+
+  X3 = [[0.5, -0.5, -0.1],
+        [0, -0.4, 0],
+        [0.5, 0.5, 0.2]]
+
+  X = np.array([X1, X2, X3])
+
+  h1 = [[1]]
+  h2 = [[-1]]
+  h3 = [[0.5]]
+
+  H = np.array([h1, h2, h3])
+  print('3 channel 1x1 masks applied to X1 X2 X3:')
+  print(apply_mask(X, H))
+
