@@ -1,17 +1,6 @@
 import numpy as np
 import math
 
-'''
-Based on Question 4 in Tutorial 5:
-The following array show the output produced by a mask in a convolutional layer of a CNN.
-
-          [[1, 0.5, 0.2], 
- net_j =  [-1, -0.5, -0.2], 
-          [0.1, -0.1, 0]]
-
-Calculate the values produced by the application of the following activation functions:
-'''
-
 def main(net_j, activation_function, a = 0.1, threshold = 0.1, heaviside_0 = 0.5):
 
     new_array = []
