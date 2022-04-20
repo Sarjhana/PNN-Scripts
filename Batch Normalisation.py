@@ -1,4 +1,4 @@
-
+import numpy as np
 # Returns samples after batch normalization.
 # Parameters: samples - collections of samples in which every sample needs to
 # have the same shape, beta, gamma, epsilon are parameters of the batch
