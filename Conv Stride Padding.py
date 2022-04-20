@@ -41,6 +41,7 @@ def apply_mask(X, H, padding=0, stride=1, dilation=1):
             feature_map[xf, yf] = np.sum(H * receptive_region)
     return feature_map
   
+    
 if __name__ == '__main__':
 
   # 2 input feature maps with 2 channels of 2x2 masks
