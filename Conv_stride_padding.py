@@ -1,4 +1,5 @@
 # Calculating Convolution using mask H of two channels H1, H2 for feature maps X1, X2 with different strides and padding
+# Mask H is of two channels, each 2x2
 
 import numpy as np
 
