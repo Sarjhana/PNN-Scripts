@@ -25,6 +25,8 @@ if __name__ == '__main__':
     
     # define shape using template (height,width,n_channels)
     
+    # Note : For sequence of layers, use output of previous layer as input and calculate
+    
     input_shape = (11, 15, 6)
     mask_shape = (3, 3, 6)
     n_masks = 1
