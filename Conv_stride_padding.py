@@ -1,5 +1,6 @@
 # Calculating Convolution using mask H of two channels H1, H2 for feature maps X1, X2 with different strides and padding
 
+import numpy as np
 
 def strided_len(x_len, H_len, stride):
     return np.ceil((x_len - H_len + 1) / stride).astype(int)
