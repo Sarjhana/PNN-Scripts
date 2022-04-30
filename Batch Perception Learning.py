@@ -2,17 +2,17 @@
 
 import numpy as np
 # ------------------------------------------------------------------------------------
-a = np.array([-1.5, 5.0, -1.0])           # Initial value of a/weights
+a = np.array([-25.0, 6.0, 3.0])           # Initial value of a/weights
 n = 1                # Learning Rate
-iterations = 2         # Iterations
-AUTO_CONVERGE = False   # Ignore iterations varible, carry on until convergences
+epochs = 3         # Epochs
+AUTO_CONVERGE = True   # Ignore iterations varible, carry on until convergences
 DO_SAMPLE_NORMALISATION = True  # Should this code perform sample normalisation
 
 # Given Dataset:
 
 # Add dataset as given in question.
-X = [[0, 0], [1, 0], [2, 1], [0, 1], [1, 2]]
-Y = np.array([1, 1, 1, -1, -1])
+X = [[1, 5], [2, 5], [4, 1], [5, 1]]
+Y = np.array([1, 1, -1, -1])
 
 # ------------------------------------------------------------------------------------
 # Applying Sample Normalisation:
@@ -28,7 +28,7 @@ NORM_X = np.asarray(NORM_X)
 # ------------------------------------------------------------------------------------
 # bATCH Perceptron Learning Algorithm
 # Epoch for-loop: can directly put epoch numbers
-for o in range(iterations):
+for o in range(epochs):
 
     # This for-loop goes through each sample one-by-one:
     CONVERGED = True
@@ -42,12 +42,12 @@ for o in range(iterations):
         ay = np.dot(a, x)
 
         def isMisclassified(ay, y):
-            if DO_SAMPLE_NORMALISATION and ay < 0:
+            if DO_SAMPLE_NORMALISATION and ay <= 0:
                 return True
             elif DO_SAMPLE_NORMALISATION:
                 return False
 
-            if ay < 0 and y == 1:
+            if ay <= 0 and y == 1:
                 return True
             elif ay > 0 and y == -1:
                 return True
