@@ -2,16 +2,17 @@
 
 import numpy as np
 # ------------------------------------------------------------------------------------
-a = np.array([-1.5, 5.0, -1.0])         # Initial value of a/weights
+# TAKE NEGATIVE OF THETA!
+a = np.array([1, 0, 0])         # Initial value of a/weights
 n = 1                # Learning Rate
-iterations = 8         # Iterations
+iterations = 20         # Iterations
 DO_SAMPLE_NORMALISATION = False
 
 # Given Dataset:
 
 # Add dataset as given in question.
-X = [[0, 0], [1, 0], [2, 1], [0, 1], [1, 2]]
-Y = np.array([1, 1, 1, 0, 0])
+X = [[0, 2], [1, 2], [2, 1], [-3, 1], [-2, -1], [-3, -2]]
+Y = np.array([1, 1, 1, 0, 0, 0])
 
 # ------------------------------------------------------------------------------------
 # Applying Sample Normalisation:
