@@ -1,11 +1,10 @@
 from sklearn.neighbors import KNeighborsClassifier
+import numpy as np
 
-from sklearn import datasets
-iris = datasets.load_iris()
+x = np.array([[0.15, 0.35], [0.15, 0.28], [
+    0.12, 0.2], [0.1, 0.32], [0.06, 0.25]])
+y = np.array([1, 2, 2, 3, 3])
 
-x = iris.data
-y = iris.target
-
-knn = KNeighborsClassifier(n_neighbors=5)
+knn = KNeighborsClassifier(n_neighbors=3, metric='euclidean')
 knn.fit(x, y)
-print(knn.predict([[7.1,3.8,6.7,2.5]]))
+print(knn.predict([[0.1, 0.25]]))
