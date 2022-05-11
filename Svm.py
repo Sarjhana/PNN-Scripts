@@ -84,7 +84,8 @@ support_vector_class = clf.predict(support_vectors)
 
 print("Support vectors are: {}".format(support_vectors))
 
-
+# Also running the data through _svm() since it gives us the lambda values.
+# Therefore this function does not impact the graph but outputs useful data.
 _svm(X, y, support_vectors=support_vectors,
      support_vector_class=support_vector_class)
 
