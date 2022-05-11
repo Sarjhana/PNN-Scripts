@@ -1,92 +1,36 @@
 import math
 import numpy as np
+import operator
+
 
 # NOTE you can use if for Q1 c in tutorial9
-
-def run_adaBooster_setup():
-    """ Ask the user to enter the needed parameters
-    """  
-    print("Please insert the dataset. Each sample should be divided by a space and each coordinate within a sample should be divided by a coma. \nBe careful not to enter spaces after the coma that separates the samples' coordinates.\n")
-    print("I.E.: x1=[1,2], x2=[-3,4], x3=[5,3] would be ---> 1,2 -3,4 5,3 \n")
-    dataset_input = str(input())
-    dataset = np.array([]).reshape(0,2)
-    samples = dataset_input.split(' ')
-    for sample in samples:
-        coordinates = sample.split(',')
-        coordinates = np.array([float(c) for c in coordinates])
-        dataset = np.concatenate((dataset, [coordinates]))
-    print("\n")
-    print("Please insert the labels (y) of each sample in the dataset. \nYou should provide a sequential list of y where each y is separated by a single space.")
-    print("I.E. +1 -1 +1 -1")
-    labels = [ int(o) for o in str(input()).split(' ')] 
-    print("\n")
-    print("Please insert the number of weak classifiers:")
-    n_classifiers = int(input())
-    print("\n")
-    thresholds = np.array([])
-    for i in range(0, n_classifiers):
-        print(f"Please insert the decision threshold for weak classifier {i+1} so that it classify a sample to be +1:")
-        print("I.E.: x1 > 0")
-        print("I.E.: x2 > 3")
-        print("I.E.: x1 >= -4")
-        thresholds = np.concatenate((thresholds, [str(input())]))
-        print('\n')
-    print("Please enter the target training error (when the adaboost should terminate). This should be normalised to the total number of samples:")
-    print("I.E.: 0 -> if you want to stop it when the classifier classifies correctly all the training samples.")
-    print("I.E.: 0.25 -> if you want to stop it when the classifier classifies correctly 75\% of the samples.")
-    target_error = int(input())
-    print("\n")
-    print("Please enter the maximum number of iterations you want the algorithm to run for:")
-    max_iterations = int(input())
-    print("\n")
-    return dataset, labels, n_classifiers, thresholds, target_error, max_iterations
-
+# Go to the bottom to add in your own data
 
 # Decision stump used as weak classifier
 class DecisionStump():
-    def __init__(self, id, threshold=None):
-        self.threshold = threshold
+    def __init__(self, id, classifier=None):
+        self.classifier = classifier
         self.id = id
         
 
     def predict(self, sample):
-        if '>' in self.threshold:
-            terms = self.threshold.split(' ')
-            axis_in_condition = [int(c) - 1 for c in terms[0] if c.isdigit()]
-            if sample[axis_in_condition[0]] > float(terms[2]):
-                return 1
-            else:
-                return -1
-        elif '<' in self.threshold:
-            terms = self.threshold.split(' ')
-            axis_in_condition = [int(c) - 1 for c in terms[0] if c.isdigit()]
-            if sample[axis_in_condition[0]] < float(terms[2]):
-                return 1
-            else:
-                return -1
-        elif '<=' in self.threshold:
-            terms = self.threshold.split(' ')
-            axis_in_condition = [int(c) - 1 for c in terms[0] if c.isdigit()]
-            if sample[axis_in_condition[0]] <= float(terms[2]):
-                return 1
-            else:
-                return -1
-        elif '>=' in self.threshold:
-            terms = self.threshold.split(' ')
-            axis_in_condition = [int(c) - 1 for c in terms[0] if c.isdigit()]
-            if sample[axis_in_condition[0]] >= float(terms[2]):
-                return 1
-            else:
-                return -1
+        # classifier = [operator, x_num, threshold, output]
+        if self.classifier[0](sample[self.classifier[1]-1], self.classifier[2]):
+            return self.classifier[3]
+        else:
+            return -self.classifier[3]
 
+    def __repr__(self) -> str:
+        return f"{self.id} {self.classifier}"
 
 class Adaboost():
 
-    def __init__(self, n_clf, thresholds, target_error, max_iterations=10):
-        self.n_clf = n_clf
+    def __init__(self, classifiers, target_error, max_iterations=10):
+        self.n_clf = len(classifiers)
         self.clfs = np.array([])
-        for i in range (0, len(thresholds)):
-            self.clfs = np.concatenate(( self.clfs, [DecisionStump(i+1, thresholds[i])] ))
+        for i in classifiers:
+            self.clfs = np.concatenate(( self.clfs, [DecisionStump(i, classifiers[i])] ))
+        print("Classifiers:\n", self.clfs, '\n')
         # self.alpha = 0
         self.alpha = []
         self.target_error = target_error
@@ -148,12 +92,13 @@ class Adaboost():
             new_w = []
             for i, weight in enumerate(w):
                 new_w.append(w[i] * (np.exp(- alpha * y[i] * predictions[i])))
-                print(f"Update weight: W{iteration}(sample{i+1})*e^-alpha{iteration}*y{i+1}*h{iteration}(sample{i+1}) ----> {w[i] * (np.exp(- alpha * y[i] * predictions[i]))}")
+                print(f"Update weight: {round(w[i],4)}*e^-{round(alpha,4)}*{y[i]}*{predictions[i]} ----> {round(new_w[-1], 4)}")
             # Normalize to one
             Z_normalisation = 0
             for i, weight in enumerate(new_w):
                 Z_normalisation += weight
             for i, weight in enumerate(new_w):
+                print(f"Update weight: {round(new_w[i],4)}/{round(Z_normalisation,4)}")
                 new_w[i] /= Z_normalisation
             print(f"Normalisation Z{iteration} when updating new weights: {Z_normalisation}")
             # Update weights for next iteration
@@ -172,6 +117,7 @@ class Adaboost():
                     prediction = clf.predict(sample)
                     sample_classifications[j][i] = alpha if prediction == y[j] else -alpha
                 decision_formula += f"{alpha} * h{clf.id}(x) + "
+            
             # Calculate the AdaBooster classification error in this round
             sample_classifications = sample_classifications.sum(axis=1)
             for i, classification in enumerate(sample_classifications):
@@ -208,14 +154,39 @@ class Adaboost():
 
 
 if __name__ == '__main__':
-    dataset, labels, n_classifiers, thresholds, target_error, max_iterations = run_adaBooster_setup()
-    classifier = Adaboost(n_classifiers, thresholds, target_error, max_iterations)
+    
+    # Update the below with the dataset you want to use
+    dataset = np.array([[1,0], [-1,0], [0,1], [0,-1]])
+    labels = np.array([1,1,-1,-1])
+
+    # Enter all the weak classifiers here
+    # {classifier_num: [operator, x_num, threshold, output]...}
+    classifiers = {1: [operator.gt, 1, -0.5, 1], 2: [operator.gt, 1, -0.5, -1], 3: [operator.gt, 1, 0.5, 1], 4: [operator.gt, 1, 0.5, -1], 5: [operator.gt, 2, -0.5, 1], 6: [operator.gt, 2, -0.5, -1], 7: [operator.gt, 2, 0.5, 1], 8: [operator.gt, 2, 0.5, -1]}
+    
+    target_error = 0
+    max_iterations = 10
+
+    h_err = []
+
+    for h in classifiers:
+        err = 0.
+        clf = classifiers[h]
+        for indx, x in enumerate(dataset):
+            if clf[0](x[clf[1]-1], clf[2]):
+                out = clf[3]
+            else:
+                out = -clf[3]
+            if labels[indx] != out:
+                err += 1.
+        h_err.append(err/float(len(dataset)))
+
+    print("Initial classification error: {}\n".format(list(zip(classifiers.keys(), h_err))))
+    print("Initial bagging training error: {}\n".format(np.sum(h_err)/float(len(h_err))))
+
+    classifier = Adaboost(classifiers, target_error, max_iterations)
     classifier.fit(dataset, labels)
     
-    while True:
-        print("\nEnter a new sample (separating its coordinates with a coma and not including spaces) to predict or simply enter quit()")
-        sample = str(input())
-        if sample == 'quit()':
-            quit()
-        result = classifier.predict([float(c) for c in sample.split(',')])
-        print(f"The AdaBoost classifier classified it as {result}")
+    # Additional sample to classify
+    sample = np.array([1,1], dtype=float)
+    result = classifier.predict(sample)
+    print(f"The AdaBoost classifier classified it as {result}")
