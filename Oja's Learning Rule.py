@@ -33,7 +33,7 @@ def Oja_learning_rule(epoch):
         df['ny(x -yw)']  = df['ny(x -yw)'].apply(lambda x: np.round(x,6))
         sum_of_weights = df['ny(x -yw)'].sum()
         weight_update = weight_update + sum_of_weights   
-        display(df)
+        print(df)
         print(f'after {i} epoch Total weight change is: {sum_of_weights}')
         print(f'after {i} epoch our weights are: {weight_update}')
 
