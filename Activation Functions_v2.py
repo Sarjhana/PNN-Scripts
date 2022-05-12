@@ -17,4 +17,4 @@ def TanH(x):
     return np.tanh(x)
   
 
-  print(ReLU(x))
+print(ReLU(x))
