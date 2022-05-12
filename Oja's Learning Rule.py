@@ -7,8 +7,13 @@ n = 0.01
 iterations = 5 # 1 epoch = len(x) eg., 5
 # -------------------------------------------------------------
 
+# Calculating Zero Mean Data
 x = x - np.mean(x,0)
+
+# Updating weights
 for i in range(iterations):
   y = np.dot(w, x[i % len(x)].T)
   w = w + (n*y*(x[i%len(x)] - (y*w)))
+
+# Printing updated weights
 print(w)
