@@ -29,7 +29,7 @@ from matplotlib import pyplot as plt
 #     return means, cov, eigenVal, eigenVec
 
 # # Modify Input Data [1., 2., 1.], [2, 3., 1.], [3., 5., 1.], [2., 2., 1.]
-x = pd.DataFrame([[1,2,1], [2,3,1], [3,5,1], [2,2,1]])  # input data
+x = pd.DataFrame([[4,2,2], [0,-2,2], [2,4,2], [-2,0,2]])  # input data
 
 # means, cov, eigenVal, eigenVec = karhunen(x)
 
@@ -66,17 +66,12 @@ print("\n\nMean: \n{}".format(pca.mean_))
 print(pca.get_covariance())
 
 
-# y = np.array([list(x) for x in list(zip(y[0], y[1]))])
-# print(y)
 
 x_ = np.array([[3, -2, 5]])
-print(pca.transform(x_))
+print("\nNew x: {}\nProjected: {}".format(x_, np.dot(pca.components_, x_[0])))
+
 
 plt.scatter(y[:,0], y[:,1])
 plt.show()
 
-# print(y_)
-
-# plt.scatter(y_[:,0], [0]*len(y_))
-# plt.show()
 

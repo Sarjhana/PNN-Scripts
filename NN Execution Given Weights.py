@@ -1,15 +1,29 @@
 import numpy as np
 
+
+
 # Add weights of each layer here
-w = [
-    # Layer 1 with four inputs going to three hidden nodes
-    [[-0.62, 0.44, -0.91],[-0.81, -0.09, 0.02],[0.74, -0.91, -0.60],[-0.82, -0.92, 0.71],[-0.26, 0.68, 0.15],[0.80, -0.94, -0.83]], 
-    # Layer 2 with three inputs going to two output nodes
-    [[0.,0.,0.,-1.,0.,0.,2.]]
-    ]
+# w = np.array([
+#     # Layer 1 with four inputs going to three hidden nodes
+#     [[-0.7057, 1.9061, 2.6605, -1.1359],
+#     [0.4900, 1.9324, -0.4269, -5.1570],
+#     [0.9438, -5.4160, -0.3431, -0.2931],],
+#     # Layer 2 with three inputs going to two output nodes
+#     [[-1.1444, 0.3115, -9.9812],
+#     [0.0106, 11.5477, 2.6479]]
+#     ])
+
+# 1 row of weights = for each output node in the next layer
+
+w = np.array([
+    [[1,0], [0.5,-3]],
+    [[6,7]]
+    ])
 
 # Biases for each output num for each layer
 # b = [[-0.62, -0.81, 0.74, -0.82, -0.26, 0.8], [0.]]
+
+b = np.array([[0, -2], [-8]])
 
 def augment(input):
     # If using augmented notation
@@ -19,11 +33,22 @@ def augment(input):
 def linear(x, y):
     return x
 
-activationFunctions = [np.heaviside, linear]
+def sigmoid(x, y):
+    return 1. / (1. + np.exp(-x))
+
+def tanh(x, y):
+    return np.tanh(x)
+
+def logSig(x,y):
+    return np.log(sigmoid(x,y ))
+
+
+# Final actiavtion function is applied to z to get y
+activationFunctions = [linear, linear, linear]
 
 # Inputs to the network
-x = np.array([[0,0],[0,1,],[1,0],[1,1]])
-x = augment(x)
+x = np.array([[1, 5]])
+# x = augment(x)
 print(x)
 # Running through each layer of the network:
 
@@ -39,24 +64,23 @@ for input in x:
         print("\nLayer {}".format(j))
         next_layer = np.zeros((len(w[j])))
 
-        # For each set of weights in this layer
-        for k in range(len(w[j])):
-            print(input, w[j][k])
-            next_layer[k] = np.dot(input, w[j][k])
 
-            # Use if not using augmented notation
-            # next_layer[k] = np.dot(layer, w[j][k]) + b[j][k]
+        for k in range(len(w[j])):
+
+            w_ = np.array(w[j][k])
+
+            print(input, w_, b[j][k])
+
+            next_layer[k] += np.matmul(input, w_) + b[j][k]
             print(next_layer)
-        
-        # If using augmentation
-        if j < len(w)-1:
-            next_layer = np.append([1], next_layer)
+
         
         input = activationFunctions[j](next_layer, 0)
         print(input, '\n')
 
-    # Final layer, add any activation functions to z here.
+    # Any activation functions for z?
     z.append(list(input))
+
 
 
 output = list(zip(x, z))
