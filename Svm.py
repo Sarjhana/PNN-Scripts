@@ -5,8 +5,8 @@ from matplotlib import pyplot as plt
 
 
 # REPLACE X AND Y ACCORDING TO THE QUESTION
-X = np.array([[2,2], [2, -2], [-2,-2,], [-2,2], [1,1], [1,-1], [-1,-1], [-1,1]])
-y = [1, 1, 1, 1, -1, -1, -1, -1]
+X = np.array([[1,2], [7,8], [10,15]])
+y = [1, 2, 2]
 
 
 def mapping(X):
@@ -70,7 +70,7 @@ def _svm(X, y, support_vectors, support_vector_class):
 
 
 # Fitting the model. Change the kernel type if the graph looks wrong.
-clf = svm.SVC(kernel="poly", degree=2)
+clf = svm.SVC(kernel="poly", degree=1)
 # clf = svm.SVC(kernel="linear")
 clf.fit(X, y)
 
@@ -80,7 +80,9 @@ clf.fit(X, y)
 # support_vectors = np.array([[3,1], [3,-1], [1,0]])
 # support_vector_class = np.array([1, 1, -1])
 support_vectors = clf.support_vectors_
-support_vector_class = clf.predict(support_vectors)
+support_vector_class = [-1 if x <=1 else 1 for x in clf.predict(support_vectors)]
+# print(np.heaviside(support_vector_class,1.5))
+print(support_vector_class)
 
 print("Support vectors are: {}".format(support_vectors))
 
