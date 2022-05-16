@@ -2,17 +2,17 @@
 # Returns output of the height, width and output size based on input shape,
 # mask shape, number of masks, stride and padding. When defining shape for
 # input or mask specify it as (height,width, n_channels)
-def calc_output_dim(input_shape, mask_shape, n_masks, stride, padding):
-    output_h = int(calc_dim(input_shape[0], mask_shape[0], padding, stride))
-    output_w = int(calc_dim(input_shape[1], mask_shape[1], padding, stride))
+def calc_output_dim(input_shape, mask_shape, n_masks, stride, padding, dilation):
+    output_h = int(calc_dim(input_shape[0], mask_shape[0], padding, stride, dilation))
+    output_w = int(calc_dim(input_shape[1], mask_shape[1], padding, stride, dilation))
 
     return output_h, output_w, output_h * output_w * n_masks
 
 
 # Returns output size for specific dimension, like height or width in case of
 # 2D arrays, based on input dimension, mask dimension, padding and stride
-def calc_dim(input_dim, mask_dim, padding, stride):
-    return 1 + ((input_dim - mask_dim + 2 * padding) / stride)
+def calc_dim(input_dim, mask_dim, padding, stride, dilation):
+    return (input_dim + 2*padding - mask_dim - (mask_dim-1)*(dilation-1))/stride + 1
   
 
 if __name__ == '__main__':
@@ -32,8 +32,9 @@ if __name__ == '__main__':
     n_masks = 1
     stride = 2
     padding = 0
+    dilation = 1
     print('calculate output dimension')
     out_h, out_w, out_size = calc_output_dim(input_shape, mask_shape, n_masks,
-                                             stride, padding)
+                                             stride, padding, dilation)
     print('output shape is: ' + str(out_h) + 'x' + str(out_w) + 'x' +
           str(n_masks) + '=' + str(out_size))
