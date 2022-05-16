@@ -11,6 +11,7 @@ class Node():
     criterion = None
     left_count = 0
     right_count = 0
+    entropy = 0
 
     def __init__(self, left=None, right=None, criterion=None, output=None):
         self.left = left
@@ -24,9 +25,9 @@ class Node():
         depth += 1
         # If a node is a leaf, criterion is None
         if self.criterion is None:
-            tree[depth].append([(self.left_count, self.right_count), self.output])
+            tree[depth].append([(self.right_count, self.left_count), self.entropy, self.output])
         else:
-            tree[depth].append([(self.left_count, self.right_count), self.repr_lambda(self.criterion)])
+            tree[depth].append([(self.right_count, self.left_count), self.entropy, self.repr_lambda(self.criterion)])
             self.left.dfs(tree, depth)
             self.right.dfs(tree, depth) 
         
@@ -44,30 +45,22 @@ class Node():
                 p_left = classCount[0] / (classCount[0] + classCount[1])
                 p_right = classCount[1] / (classCount[0] + classCount[1])
 
-                def divWeird(x, y):
-
-                    try:
-                        return x / y
-                    except:
-                        return 0
-
-                def side(l, r):
-                    
-                    a = -divWeird(l , (l + r))
-                    
-                    if a == 0.0:
-                        return 0
-
-                    b = np.log2(-a)
-
-                    return a * b
-
-                entropy = side(p_left, p_right) + side(p_right, p_left)
-
-
-
-                print(" {}, entropy = {}, p_left: {}, p_right: {}, {} |".format(node[0], round(entropy, 2), round(p_left, 2), round(p_right, 2), node[1]), end='')
+                
+                print(" {}, entropy = {}, p_left: {}, p_right: {}, {} |".format(node[0], round(node[1], 2), round(p_left, 2), round(p_right, 2), node[2]), end='')
             print()
+
+
+        if len(list(levels_dict.keys())) == 2:
+            root = levels_dict[1][0]
+            classCount = root[0]
+            p_left = classCount[0] / (classCount[0] + classCount[1])
+            p_right = classCount[1] / (classCount[0] + classCount[1])
+
+
+            entropy = root[1] - (p_left * levels_dict[2][0][1]) - (p_right * levels_dict[2][1][1])
+
+            print("\nDrop in entropy: ", entropy)
+
 
         print()
 
@@ -88,6 +81,28 @@ class Node():
                 self.right_count += 1
             else:
                 self.left_count += 1
+
+
+            def divWeird(x, y):
+
+                    try:
+                        return x / y
+                    except:
+                        return 0
+
+            def side(l, r):
+                
+                a = -divWeird(l , (l + r))
+                
+                if a == 0.0:
+                    return 0
+
+                b = np.log2(-a)
+
+                return a * b
+
+            self.entropy = side(self.left_count, self.right_count) + side(self.right_count, self.left_count)
+
         if self.criterion is None:
             print("Found leaf")
             return self.output
